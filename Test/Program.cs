@@ -1,11 +1,16 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
+using Test.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddDbContext<TestCasesManagerDbContext>(
+    opt => opt.UseSqlServer(
+        "Data Source= (localDb)\\MSSQLLocalDb;Initial Catalog = TestCasesManagerDb"));
 
 var app = builder.Build();
 
