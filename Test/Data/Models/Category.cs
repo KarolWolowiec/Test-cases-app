@@ -10,6 +10,6 @@ namespace Test.Data.Models
         [StringLength(100)]
         public string? Name { get; set; }
 
-        public List<TestCase> TestCases { get; set; } = new()
+        public List<TestCase> TestCases { get; set; } = new();
     }
 }
