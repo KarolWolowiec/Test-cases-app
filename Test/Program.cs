@@ -10,7 +10,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddDbContext<TestCasesManagerDbContext>(
     opt => opt.UseSqlServer(
-        "Data Source= (localDb)\\MSSQLLocalDb;Initial Catalog = TestCasesManagerDb"));
+        builder.Configuration.GetConnectionString("TestCasesManagerDb")));
 
 var app = builder.Build();
 

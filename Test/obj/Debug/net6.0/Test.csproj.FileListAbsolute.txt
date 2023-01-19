@@ -110,3 +110,11 @@ C:\Users\Karol\Desktop\Test\Test\obj\Debug\net6.0\scopedcss\projectbundle\Test.b
 C:\Users\Karol\Desktop\Test\Test\obj\Debug\net6.0\Test.csproj.CopyComplete
 C:\Users\Karol\Desktop\Test\Test\obj\Debug\net6.0\Test.genruntimeconfig.cache
 C:\Users\Karol\Desktop\Test\Test\obj\Debug\net6.0\ref\Test.dll
+C:\Users\Karol\Desktop\Test\Test\bin\Debug\net6.0\Humanizer.dll
+C:\Users\Karol\Desktop\Test\Test\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll
+C:\Users\Karol\Desktop\Test\Test\bin\Debug\net6.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\Karol\Desktop\Test\Test\bin\Debug\net6.0\Mono.TextTemplating.dll
+C:\Users\Karol\Desktop\Test\Test\bin\Debug\net6.0\System.CodeDom.dll
+C:\Users\Karol\Desktop\Test\Test\bin\Debug\net6.0\System.Text.Encodings.Web.dll
+C:\Users\Karol\Desktop\Test\Test\bin\Debug\net6.0\System.Text.Json.dll
+C:\Users\Karol\Desktop\Test\Test\bin\Debug\net6.0\runtimes\browser\lib\net6.0\System.Text.Encodings.Web.dll
