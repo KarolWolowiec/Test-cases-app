@@ -1,7 +1,46 @@
 ﻿@page "/testcases/list"
+@inject IDbContextFactory<TestCasesManagerDbContext> ContextFactory
 
 <PageTitle>Test Cases</PageTitle>
 
 <h1>Test Cases</h1>
 
-TODO: List the test cases here.
+@if(TestCases is null)
+{
+    <div>Loading...</div>
+}else
+{
+    <table class="table table-striped">
+        <thread>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Category</th>
+            </tr>
+        </thread>
+        <tbody>
+            @foreach(var testCase in TestCases)
+            {
+                <tr>
+                    <td>@testCase.Id</td>
+                    <td>@testCase.Title</td>
+                    <td>@testCase.Description</td>
+                    <td>@testCase.Category?.Name</td>
+                </tr> 
+            }
+        </tbody>
+    </table>
+}
+@code{
+    private TestCase[]? TestCases{ get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = ContextFactory.CreateDbContext();
+
+        TestCases = await context.TestCases
+        .Include(tst => tst.Category)
+        .ToArrayAsync();
+    }
+}
