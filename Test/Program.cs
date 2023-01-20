@@ -14,6 +14,20 @@ builder.Services.AddDbContext<TestCasesManagerDbContext>(
 
 var app = builder.Build();
 
+//ensure that site always get the latest migration of db
+await EnsureDataBaseIsMigrated(app.Services);
+
+async Task EnsureDataBaseIsMigrated(IServiceProvider services)
+{
+    using var scope = services.CreateScope();
+    using var ctx = scope.ServiceProvider.GetService<TestCasesManagerDbContext>();
+
+    if(ctx is not null)
+    {
+        await ctx.Database.MigrateAsync();
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
