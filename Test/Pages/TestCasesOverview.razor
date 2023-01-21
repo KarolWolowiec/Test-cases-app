@@ -15,18 +15,18 @@
 {   //previous button
     <ul class="pagination mt-3">
         <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
-            <a class="page-link" href="/testCases/list/@(CurrentPage - 1)">Previous</a>
+            <a class="page-link" href="/testcases/list/@(CurrentPage - 1)">Previous</a>
         </li>
         @for (int i = 1; i <= TotalPages; i++)
         {   
             //added buttons to select a specific page
             <li class="page-item @(CurrentPage == i ? "active" : "")">
-                <a class="page-link" href="testCases/list/@i"> @i</a>
+                <a class="page-link" href="testcases/list/@i"> @i</a>
             </li>
         }
         <!--next button-->
         <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
-            <a class="page-link" href="/testCases/list/@(CurrentPage + 1)">Next</a>
+            <a class="page-link" href="/testcases/list/@(CurrentPage + 1)">Next</a>
         </li>
     </ul>
 
