@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Test.Data;
 
@@ -22,7 +20,7 @@ async Task EnsureDataBaseIsMigrated(IServiceProvider services)
     using var scope = services.CreateScope();
     using var ctx = scope.ServiceProvider.GetService<TestCasesManagerDbContext>();
 
-    if(ctx is not null)
+    if (ctx is not null)
     {
         await ctx.Database.MigrateAsync();
     }

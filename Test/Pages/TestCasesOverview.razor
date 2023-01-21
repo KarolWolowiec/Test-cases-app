@@ -1,5 +1,8 @@
 ﻿@page "/testcases/list"
+@page "/testcases/list/{currentPage:int?}"
+
 @inject IDbContextFactory<TestCasesManagerDbContext> ContextFactory
+@inject NavigationManager NavigationManager
 
 <PageTitle>Test Cases</PageTitle>
 
@@ -9,7 +12,25 @@
 {
     <div>Loading...</div>
 }else
-{
+{   //previous button
+    <ul class="pagination mt-3">
+        <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+            <a class="page-link" href="/testCases/list/@(CurrentPage - 1)">Previous</a>
+        </li>
+        @for (int i = 1; i <= TotalPages; i++)
+        {   
+            //added buttons to select a specific page
+            <li class="page-item @(CurrentPage == i ? "active" : "")">
+                <a class="page-link" href="testCases/list/@i"> @i</a>
+            </li>
+        }
+        <!--next button-->
+        <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+            <a class="page-link" href="/testCases/list/@(CurrentPage + 1)">Next</a>
+        </li>
+    </ul>
+
+    //insert html table with data from TestCasesManagerDb
     <table class="table table-striped">
         <thread>
             <tr>
@@ -31,16 +52,49 @@
             }
         </tbody>
     </table>
+
+
 }
 @code{
+    [Parameter]
+    public int? CurrentPage { get; set; }
+
     private TestCase[]? TestCases{ get; set; }
 
-    protected override async Task OnInitializedAsync()
+    private int TotalPages { get; set; }
+
+    private const int ItemsPerPage = 4;
+
+    protected override async Task OnParametersSetAsync()
     {
+        //handler to a too low CurrentPage value eg. /testcases/list/-1
+        if(CurrentPage is null or < 1)
+        {
+            NavigationManager.NavigateTo("/testcases/list/1");
+            return; 
+        }
+
         using var context = ContextFactory.CreateDbContext();
+
+        //handler to a too high CurrentPage value eg. /testcases/list/9999999
+        var testCasesCount = await context.TestCases.CountAsync();
+        TotalPages = testCasesCount == 0
+        ? 1
+        : (int)Math.Ceiling((double)testCasesCount / ItemsPerPage);
+
+        if(CurrentPage > TotalPages)
+        {
+            NavigationManager.NavigateTo($"/testCases/list/{TotalPages}");
+            return;
+        }
+
+        var itemsToSkip = (CurrentPage.Value - 1) * ItemsPerPage;
 
         TestCases = await context.TestCases
         .Include(tst => tst.Category)
+        .OrderBy(tst => tst.Title)
+        .Skip(itemsToSkip)
+        .Take(ItemsPerPage)
         .ToArrayAsync();
     }
 }
