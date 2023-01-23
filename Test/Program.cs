@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Test.Data;
+using Test.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddDbContextFactory<TestCasesManagerDbContext>(
     opt => opt.UseSqlServer(
         builder.Configuration.GetConnectionString("TestCasesManagerDb")));
+builder.Services.AddScoped<StateContainer>();
 
 var app = builder.Build();
 

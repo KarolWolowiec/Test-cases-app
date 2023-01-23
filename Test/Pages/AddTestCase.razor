@@ -6,7 +6,8 @@
 
 <TestCaseForm TestCase="@TestCase"
  Categories="@Categories"
- IsBusy="@IsBusy"/>
+ IsBusy="@IsBusy"
+ OnSubmit="@HandleSubmit"/>
 
 <!--Display success/error messages-->
 
@@ -46,6 +47,18 @@
             };
 
 
+    }
+
+    private async Task HandleSubmit(bool isValid)
+    {
+        if (isValid)
+        {
+            await HandleValidSubmit();
+        }
+        else
+        {
+            HandleInvalidSubmit();
+        }
     }
 
     private async Task HandleValidSubmit()

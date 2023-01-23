@@ -1,0 +1,101 @@
+﻿@page "/testcases/edit/{testCaseId:int}"
+@inject IDbContextFactory<TestCasesManagerDbContext> ContextFactory
+@inject NavigationManager NavigationManager
+@inject StateContainer StateContainer
+
+<PageTitle>Edit Test Case</PageTitle>
+
+<h1>Edit Test Case</h1>
+
+<!--show a form to edit a test case-->
+@if(TestCase is null && !IsBusy)
+{
+    <div class="alert alert-danger">Test case with Id @TestCaseId was not found.</div>
+}
+else
+{
+    <TestCaseForm TestCase="@TestCase"
+        Categories="@Categories"
+        IsEdit="true"
+        IsBusy="@IsBusy"
+        OnSubmit="@HandleSubmit"
+        OnCancel="NavigateToOverviewPage"/>
+}
+<!--display error message when there is some error when updating test case-->
+@if(ErrorMessage is not null)
+{
+    <br/>
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
+
+@code {
+    [Parameter]
+    public int TestCaseId { get; set; }
+
+    private TestCase? TestCase { get; set; }
+
+    private bool IsBusy { get; set; }
+
+    private Category[]? Categories { get; set; }
+
+    private string? ErrorMessage{ get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {   //get data about a test case from db
+        IsBusy = true;
+
+        try
+        {
+            using var context = ContextFactory.CreateDbContext();
+
+            //get categories
+            Categories = await context.Categories
+                                       .AsNoTracking()
+                                       .OrderBy(ctg => ctg.Name)
+                                       .ToArrayAsync();
+            //get test cases
+            TestCase = await context.TestCases
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(tst => tst.Id == TestCaseId);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+
+    }
+
+    //handler to update the test case
+    private async Task HandleSubmit(bool isValid)
+    {
+        if(TestCase is null || IsBusy || !isValid)
+        {
+            ErrorMessage = null;
+            return;
+        }
+
+        IsBusy = true;
+
+        try
+        {
+            using var context = ContextFactory.CreateDbContext();
+            context.Update(TestCase);
+            await context.SaveChangesAsync();
+
+            NavigateToOverviewPage();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error while saving a test case: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+    //navigate to the latest stored page after updating a test case
+    private void NavigateToOverviewPage()
+    {
+        NavigationManager.NavigateTo($"/testcases/list/{StateContainer.TestCaseOverviewPage}");
+    }
+}

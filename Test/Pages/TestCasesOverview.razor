@@ -3,6 +3,7 @@
 
 @inject IDbContextFactory<TestCasesManagerDbContext> ContextFactory
 @inject NavigationManager NavigationManager
+@inject StateContainer StateContainer
 
 <PageTitle>Test Cases</PageTitle>
 
@@ -38,6 +39,7 @@
                 <th>Title</th>
                 <th>Description</th>
                 <th>Category</th>
+                <th>#</th>
             </tr>
         </thread>
         <tbody>
@@ -48,6 +50,12 @@
                     <td>@testCase.Title</td>
                     <td>@testCase.Description</td>
                     <td>@testCase.Category?.Name</td>
+                    <td>
+                        <a href="/testcases/edit/@testCase.Id"
+                            class="btn btn-outline-primary">
+                            Edit
+                        </a>
+                    </td>
                 </tr> 
             }
         </tbody>
@@ -88,11 +96,13 @@
             return;
         }
 
+        StateContainer.TestCaseOverviewPage = CurrentPage.Value;
+
         var itemsToSkip = (CurrentPage.Value - 1) * ItemsPerPage;
 
         TestCases = await context.TestCases
         .Include(tst => tst.Category)
-        .OrderBy(tst => tst.Title)
+        .OrderBy(tst => tst.Id)
         .Skip(itemsToSkip)
         .Take(ItemsPerPage)
         .ToArrayAsync();
