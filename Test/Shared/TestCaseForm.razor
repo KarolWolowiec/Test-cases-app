@@ -1,0 +1,68 @@
+﻿@if (TestCase is not null)
+{
+    //display html form
+    <EditForm Model="@TestCase" OnValidSubmit="@HandleValidSubmit"
+          OnInvalidSubmit="@HandleInvalidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <!--Title field-->
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <InputText id="title" class="form-control"
+                   @bind-Value="TestCase.Title" />
+            <ValidationMessage For="() => TestCase.Title" />
+        </div>
+        <!--Description field-->
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <InputText id="description" class="form-control"
+                   @bind-Value="TestCase.Description" />
+            <ValidationMessage For="() => TestCase.Description" />
+        </div>
+        <!--Category dropdown list-->
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <InputSelect id="category" class="form-select"
+                     @bind-Value="TestCase.CategoryId">
+                @if (Categories is not null)
+                {
+                    @foreach (var category in Categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                }
+            </InputSelect>
+        </div>
+
+        <button type="submit" class="btn btn-primary" disabled="@IsBusy">Add</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public TestCase? TestCase { get; set; }
+
+    [Parameter]
+    public Category[]? Categories { get; set; }
+
+    [Parameter]
+    public bool IsBusy { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnSubmit { get; set; }
+
+    private async Task HandleValidSubmit()
+    {
+        if (OnSubmit.HasDelegate)
+        {
+            await OnSubmit.InvokeAsync(true);
+        }
+    }
+    private async Task HandleInvalidSubmit()
+    {
+        if (OnSubmit.HasDelegate)
+        {
+            await OnSubmit.InvokeAsync(false);
+        }
+    }
+}
