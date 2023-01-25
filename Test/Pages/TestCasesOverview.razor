@@ -4,6 +4,7 @@
 @inject IDbContextFactory<TestCasesManagerDbContext> ContextFactory
 @inject NavigationManager NavigationManager
 @inject StateContainer StateContainer
+@inject IJSRuntime JS
 
 <PageTitle>Test Cases</PageTitle>
 
@@ -50,11 +51,15 @@
                     <td>@testCase.Title</td>
                     <td>@testCase.Description</td>
                     <td>@testCase.Category?.Name</td>
-                    <td>
+                    <td class="btn-group-sm">
                         <a href="/testcases/edit/@testCase.Id"
-                            class="btn btn-outline-primary">
+                            class="btn btn-outline-primary btn-sm">
                             Edit
                         </a>
+                        <button class="btn btn-outline-danger"
+                            @onclick="() => HandleDelete(testCase)">
+                            Delete
+                        </button>
                     </td>
                 </tr> 
             }
@@ -74,6 +79,11 @@
     private const int ItemsPerPage = 4;
 
     protected override async Task OnParametersSetAsync()
+    {
+        await LoadData();
+    }
+    //handler to load data from db
+    private async Task LoadData()
     {
         //handler to a too low CurrentPage value eg. /testcases/list/-1
         if(CurrentPage is null or < 1)
@@ -106,5 +116,21 @@
         .Skip(itemsToSkip)
         .Take(ItemsPerPage)
         .ToArrayAsync();
+    }
+    //handler to delete item from db
+    private async Task HandleDelete(TestCase testCase)
+    {
+        //confirmation pop-up when deleting an item
+        var isOk = await JS.InvokeAsync<bool>("confirm",
+        $"Delete test case {testCase.Title}?");
+
+        if (isOk)
+        {
+            using var context = ContextFactory.CreateDbContext();
+            context.TestCases.Remove(testCase);
+            await context.SaveChangesAsync();
+
+            await LoadData();
+        }
     }
 }
